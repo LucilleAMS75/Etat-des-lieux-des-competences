@@ -1,0 +1,6 @@
+{
+  "name": "Auto-évaluation des livrables NEXIA",
+  "description": "Activité pédagogique interactive et tableau d'auto-évaluation des 9 livrables du dossier NEXIA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
