@@ -1,13 +1,661 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <title>Auto-évaluation des livrables NEXIA - Panorama</title>
+    <meta name="description" content="Activité pédagogique interactive et tableau d'auto-évaluation des 9 livrables du dossier NEXIA." />
+    <!-- Tailwind CSS CDN for instant styling in any browser or GitHub Pages -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: '#d41875',
+              'brand-light': '#fce7f3',
+              'brand-subtle': '#fdf2f8',
+            }
+          }
+        }
+      }
+    </script>
+    <!-- Self-contained fallback and custom styles -->
+    <style>
+      :root {
+        --color-brand: #d41875;
+      }
+      body {
+        background-color: #F9F9FB;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #0f172a;
+        margin: 0;
+        padding: 0;
+      }
+      ::selection {
+        background-color: #fce7f3;
+        color: #d41875;
+      }
+      .transition-all-fast {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .badge-fade-in {
+        animation: badgePop 0.2s ease-out forwards;
+      }
+      @keyframes badgePop {
+        from {
+          opacity: 0;
+          transform: scale(0.85);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <main class="min-h-screen bg-[#F9F9FB] py-8 px-4 sm:px-6 lg:px-8 font-sans antialiased text-slate-900">
+      <div class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- Header Row -->
+        <header class="flex flex-row items-center justify-end">
+          <div class="text-right">
+            <h1 class="text-[#d41875] text-lg sm:text-l font-bold uppercase tracking-tight">Panorama des 9 livrables</h1>
+            <p class="text-slate-500 text-[10px] sm:text-xs font-semibold">Auto-évaluation NEXIA</p>
+          </div>
+        </header>
+
+        <!-- Title Presentation Board -->
+        <section aria-labelledby="board-title" class="bg-white border border-gray-200/80 rounded-[10px] p-6 sm:p-8 shadow-xs relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1.5 bg-[#d41875]"></div>
+          
+          <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+            <div class="space-y-2">
+              <div class="inline-flex items-center gap-1.5 text-xs font-bold text-[#d41875] tracking-wider uppercase">
+                <!-- GraduationCap icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/>
+                  <path d="M22 10v6"/>
+                  <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>
+                </svg>
+                <span>Activités interactives NEXIA</span>
+              </div>
+              <h2 id="board-title" class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                État des lieux de vos compétences
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
+                Utilisez ce tableau interactif pour cartographier l'avancement des livrables de votre dossier NEXIA. Suivez vos forces collectives et ciblez les axes à consolider.
+              </p>
+            </div>
+            
+            <!-- Session Badge & Quick Actions -->
+            <div class="flex flex-col sm:flex-row items-end sm:items-center gap-3 shrink-0 md:pt-4">
+              <div class="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 py-1.5 px-3 rounded-md text-xs font-medium text-slate-500 shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse"></span>
+                <span>Session : <strong class="font-semibold text-slate-700">lucille@1001parcours.fr</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Progress Indicator Container -->
+          <div class="mt-6 border-t border-gray-150 pt-5">
+            <div class="flex items-end justify-between mb-2">
+              <span id="progress-text" class="text-[#d41875] font-bold text-xs sm:text-sm uppercase tracking-wide">
+                0 / 9 livrables évalués
+              </span>
+              <div class="flex gap-2 sm:gap-4">
+                <span id="badge-solide-count" class="text-[11px] font-bold text-[#22c55e] flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-sm border border-emerald-100">
+                  ✓ 0 Solide
+                </span>
+                <span id="badge-consolider-count" class="text-[11px] font-bold text-[#f97316] flex items-center gap-1 bg-[#fff7ed] px-2 py-0.5 rounded-sm border border-orange-100">
+                  ◎ 0 À consolider
+                </span>
+              </div>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="w-full h-3 bg-gray-100 rounded-full border border-gray-100 overflow-hidden relative">
+              <div 
+                id="progress-bar-fill"
+                class="h-full bg-[#d41875] rounded-full transition-all duration-500 ease-out shadow-[0_0_8px_rgba(212,24,117,0.4)]"
+                style="width: 0%"
+                role="progressbar"
+                aria-valuenow="0"
+                aria-valuemin="0"
+                aria-valuemax="9"
+                aria-label="Progression de l'auto-évaluation"
+              ></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Semantic Responsive Table / Mobile Cards -->
+        <section aria-label="Tableau d'évaluation des livrables" class="bg-white md:border md:border-gray-200 md:rounded-[10px] md:shadow-sm overflow-hidden">
+          
+          <table class="w-full block md:table text-left table-fixed">
+            <thead class="hidden md:table-header-group bg-[#d41875] text-white">
+              <tr>
+                <th scope="col" class="w-[8%] py-3 text-center text-[10px] font-bold uppercase tracking-[0.1em] border-r border-white/20">
+                  Numéro
+                </th>
+                <th scope="col" class="w-[50%] py-3 px-4 text-[10px] font-bold uppercase tracking-[0.1em] border-r border-white/20">
+                  Livrables NEXIA
+                </th>
+                <th scope="col" class="w-[15%] py-3 text-center text-[10px] font-bold uppercase tracking-[0.1em] border-r border-white/20">
+                  Compétence
+                </th>
+                <th scope="col" class="w-[27%] py-3 text-center text-[10px] font-bold uppercase tracking-[0.1em]">
+                  Je me sens…
+                </th>
+              </tr>
+            </thead>
+            <tbody id="deliverables-tbody" class="block md:table-row-group divide-y divide-gray-150">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+
+          <!-- Footer segment with actions & reset -->
+          <footer class="bg-gray-50/70 border-t border-gray-100 p-4 sm:p-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div class="flex items-start gap-2 max-w-sm sm:max-w-md">
+              <!-- Help icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 shrink-0 mt-0.5" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <p class="text-[11px] sm:text-xs text-gray-500 leading-normal">
+                Les choix effectués sont stockés sur votre navigateur de manière autonome et sécurisée. Vous pouvez exporter votre auto-évaluation ou la réinitialiser.
+              </p>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+              <!-- Copy button -->
+              <button
+                id="btn-copy-summary"
+                type="button"
+                class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-xs text-[#d41875] font-bold bg-[#d41875]/10 hover:bg-[#d41875]/20 py-2 px-3.5 border border-[#d41875]/30 rounded-lg shadow-2xs transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#d41875] focus-visible:ring-offset-2"
+                aria-label="Copier le bilan de l'auto-évaluation dans le presse-papier"
+              >
+                <!-- Copy SVG -->
+                <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                </svg>
+                <span id="copy-btn-text">Copier le bilan</span>
+              </button>
+
+              <!-- Export file button -->
+              <button
+                id="btn-download-summary"
+                type="button"
+                class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 text-xs text-slate-700 font-bold bg-white hover:bg-slate-50 py-2 px-3.5 border border-slate-200 rounded-lg shadow-2xs transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
+                aria-label="Télécharger le bilan au format texte"
+              >
+                <!-- Download SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span>Télécharger (.txt)</span>
+              </button>
+
+              <!-- Reset button -->
+              <button
+                id="btn-reset"
+                type="button"
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs text-red-700 font-bold bg-white active:bg-gray-100 py-2 px-3.5 border border-gray-200 rounded-lg shadow-2xs hover:border-red-200 transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2"
+                aria-label="Réinitialiser l'auto-évaluation à zéro"
+              >
+                <!-- RotateCcw SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                  <path d="M3 3v5h5"/>
+                </svg>
+                <span>Réinitialiser les statuts</span>
+              </button>
+            </div>
+          </footer>
+        </section>
+
+        <!-- Mobile Layout Hint -->
+        <aside class="md:hidden text-center text-xs text-gray-400 pt-2 font-medium" aria-hidden="true">
+          💡 Les statuts sont sauvegardés automatiquement sur votre appareil.
+        </aside>
+      </div>
+    </main>
+
+    <!-- Embedded Vanilla JavaScript Engine -->
+    <script>
+      (function() {
+        'use strict';
+
+        // 1. Data Definition of the 9 NEXIA Deliverables
+        const DELIVERABLES = [
+          {
+            id: 1,
+            label: "Identité managériale : mon style, mes forces, mes axes de développement",
+            competencies: ["C6"]
+          },
+          {
+            id: 2,
+            label: "Cartographie de l'équipe : compétences, profils, écarts des 6 collaborateurs NEXIA",
+            competencies: ["C1", "C2"]
+          },
+          {
+            id: 3,
+            label: "Organisation & planning : rôles, jalons, objectifs SMART",
+            competencies: ["C2", "C3"]
+          },
+          {
+            id: 4,
+            label: "Tableau de bord : indicateurs, écarts, actions correctives, note de synthèse",
+            competencies: ["C3", "C9"]
+          },
+          {
+            id: 5,
+            label: "Charte QVCT : engagements, aménagements, prévention RPS",
+            competencies: ["C4", "C5"]
+          },
+          {
+            id: 6,
+            label: "Communication adaptée : grille des 6 profils, canaux, postures, formulations",
+            competencies: ["C6", "C10"]
+          },
+          {
+            id: 7,
+            label: "Plan de progression : feedbacks, actions d'accompagnement, indicateurs",
+            competencies: ["C7"]
+          },
+          {
+            id: 8,
+            label: "Prévention & médiation : signaux faibles, plan de médiation NEXIA",
+            competencies: ["C8"]
+          },
+          {
+            id: 9,
+            label: "Communication hiérarchique : schéma de flux, canaux, formats",
+            competencies: ["C10"]
+          }
+        ];
+
+        const STORAGE_KEY = 'checklist_livrables_nexia_v1';
+        const USER_SESSION_EMAIL = 'lucille@1001parcours.fr';
+
+        // In-memory state: maps deliverable ID to status ('solide' | 'consolider' | null)
+        const statuses = {};
+        for (let i = 1; i <= 9; i++) {
+          statuses[i] = null;
+        }
+
+        // 2. Load Persisted State from LocalStorage
+        function loadState() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              if (Array.isArray(parsed)) {
+                parsed.forEach(item => {
+                  if (item && item.id >= 1 && item.id <= 9) {
+                    if (item.status === 'solide' || item.status === 'consolider') {
+                      statuses[item.id] = item.status;
+                    } else {
+                      statuses[item.id] = null;
+                    }
+                  }
+                });
+              }
+            }
+          } catch (e) {
+            console.error("Erreur de chargement du stockage local :", e);
+          }
+        }
+
+        // 3. Save State to LocalStorage
+        function saveState() {
+          try {
+            const dataToSave = DELIVERABLES.map(d => ({
+              id: d.id,
+              status: statuses[d.id]
+            }));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+          } catch (e) {
+            console.error("Erreur de sauvegarde locale :", e);
+          }
+        }
+
+        // SVG Icons helper
+        const ICONS = {
+          checkCircle: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+          alertCircle: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+        };
+
+        // 4. Render Rows in the DOM
+        const tbody = document.getElementById('deliverables-tbody');
+
+        function renderRows() {
+          tbody.innerHTML = '';
+
+          DELIVERABLES.forEach(item => {
+            const currentStatus = statuses[item.id];
+            
+            const tr = document.createElement('tr');
+            tr.id = 'deliverable-row-' + item.id;
+            tr.className = 'block md:table-row p-4 mb-4 border border-gray-200 rounded-[10px] md:border-0 md:rounded-none transition-colors duration-300 ease-in-out ' + getRowBgClass(currentStatus);
+
+            // Cell 1: Number
+            const tdNumber = document.createElement('td');
+            tdNumber.className = 'flex justify-between items-center md:table-cell p-2 md:p-3 text-left md:text-center align-middle font-bold text-gray-700 text-xs sm:text-sm md:border-r md:border-gray-100 border-b border-gray-100/50 md:border-b-0 pb-3 md:pb-3';
+            tdNumber.innerHTML = `
+              <span class="md:hidden text-xs text-gray-400 font-bold uppercase tracking-wider">Livrable</span>
+              <span class="bg-slate-100/80 text-slate-800 md:bg-transparent md:text-inherit px-2 sm:px-2.5 py-0.5 rounded-sm text-xs sm:text-sm font-extrabold">N°${item.id}</span>
+            `;
+
+            // Cell 2: Deliverable Description & Status Badge
+            const tdDesc = document.createElement('td');
+            tdDesc.className = 'block md:table-cell p-2 md:p-3 align-middle pt-3 md:pt-3';
+            
+            const compList = item.competencies.map(c => 
+              `<span class="px-2 py-0.5 bg-[#fce7f3] text-[#d41875] rounded-full font-bold text-[10px]">${c}</span>`
+            ).join(' ');
+
+            tdDesc.innerHTML = `
+              <div class="flex flex-col gap-2">
+                <label id="label-livrable-${item.id}" class="font-medium text-slate-700 text-xs sm:text-sm leading-relaxed">
+                  ${item.label}
+                </label>
+                <div id="badge-container-${item.id}" class="min-h-[20px] flex items-center">
+                  ${renderStatusBadge(currentStatus)}
+                </div>
+              </div>
+            `;
+
+            // Cell 3: Competencies
+            const tdComp = document.createElement('td');
+            tdComp.className = 'flex justify-between items-center md:table-cell p-2 md:p-3 text-left md:text-center align-middle md:border-r md:border-gray-100 border-t border-b border-dashed border-gray-100 md:border-none py-3 md:py-3';
+            tdComp.innerHTML = `
+              <span class="md:hidden text-xs text-slate-400 font-bold uppercase tracking-wider">Référentiel</span>
+              <div class="flex gap-1 justify-center flex-wrap">
+                ${compList}
+              </div>
+            `;
+
+            // Cell 4: Interactive Toggle Buttons
+            const tdActions = document.createElement('td');
+            tdActions.className = 'block md:table-cell p-2 md:p-1.5 align-middle pt-3 md:pt-1.5';
+
+            const fieldset = document.createElement('fieldset');
+            fieldset.className = 'w-full';
+            fieldset.setAttribute('role', 'group');
+            fieldset.setAttribute('aria-labelledby', `label-livrable-${item.id}`);
+
+            const legend = document.createElement('legend');
+            legend.className = 'sr-only';
+            legend.textContent = `Évaluez votre sentiment d'avancement pour le livrable ${item.id} - ${item.label}`;
+            fieldset.appendChild(legend);
+
+            const btnContainer = document.createElement('div');
+            btnContainer.className = 'flex gap-2 justify-center md:justify-center items-center h-full';
+
+            // Button 1: Solide
+            const btnSolide = document.createElement('button');
+            btnSolide.type = 'button';
+            btnSolide.id = `btn-solide-${item.id}`;
+            btnSolide.setAttribute('aria-pressed', currentStatus === 'solide' ? 'true' : 'false');
+            btnSolide.setAttribute('aria-label', `N°${item.id} — ${item.label} : Solide`);
+            btnSolide.className = getBtnClass(currentStatus, 'solide');
+            btnSolide.innerHTML = `${currentStatus === 'solide' ? ICONS.checkCircle : ''}<span>Solide</span>`;
+            btnSolide.addEventListener('click', function() {
+              toggleStatus(item.id, 'solide');
+            });
+
+            // Button 2: À consolider
+            const btnConsolider = document.createElement('button');
+            btnConsolider.type = 'button';
+            btnConsolider.id = `btn-consolider-${item.id}`;
+            btnConsolider.setAttribute('aria-pressed', currentStatus === 'consolider' ? 'true' : 'false');
+            btnConsolider.setAttribute('aria-label', `N°${item.id} — ${item.label} : À consolider`);
+            btnConsolider.className = getBtnClass(currentStatus, 'consolider');
+            btnConsolider.innerHTML = `${currentStatus === 'consolider' ? ICONS.alertCircle : ''}<span>À consolider</span>`;
+            btnConsolider.addEventListener('click', function() {
+              toggleStatus(item.id, 'consolider');
+            });
+
+            btnContainer.appendChild(btnSolide);
+            btnContainer.appendChild(btnConsolider);
+            fieldset.appendChild(btnContainer);
+            tdActions.appendChild(fieldset);
+
+            tr.appendChild(tdNumber);
+            tr.appendChild(tdDesc);
+            tr.appendChild(tdComp);
+            tr.appendChild(tdActions);
+
+            tbody.appendChild(tr);
+          });
+        }
+
+        function getRowBgClass(status) {
+          if (status === 'solide') return 'bg-[#f0fdf4] hover:bg-[#e6fbf0]';
+          if (status === 'consolider') return 'bg-[#fff7ed] hover:bg-[#fff2e0]';
+          return 'bg-white hover:bg-neutral-50/50';
+        }
+
+        function renderStatusBadge(status) {
+          if (status === 'solide') {
+            return '<span class="badge-fade-in inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-[10px] font-bold bg-[#dcfce7] text-[#166534] border border-[#bbf7d0]"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg><span>LIVRABLE SOLIDE</span></span>';
+          }
+          if (status === 'consolider') {
+            return '<span class="badge-fade-in inline-flex items-center gap-1 px-2 py-0.5 rounded-sm text-[10px] font-bold bg-[#ffedd5] text-[#9a3412] border border-[#fed7aa]"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>À CONSOLIDER</span></span>';
+          }
+          return '';
+        }
+
+        function getBtnClass(currentStatus, buttonType) {
+          const isSelected = currentStatus === buttonType;
+          const base = 'flex-1 md:flex-none inline-flex items-center justify-center gap-1.5 text-xs font-bold py-1.5 px-3 rounded-md transition-all duration-150 cursor-pointer border outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
+          
+          if (buttonType === 'solide') {
+            if (isSelected) {
+              return base + ' bg-[#22c55e] border-[#22c55e] text-white shadow-sm font-bold focus-visible:ring-emerald-500';
+            }
+            return base + ' bg-gray-50 border-gray-200 text-gray-400 hover:bg-[#f0fdf4] hover:border-emerald-200 hover:text-emerald-700 font-semibold focus-visible:ring-emerald-400';
+          } else {
+            if (isSelected) {
+              return base + ' bg-[#f97316] border-[#f97316] text-white shadow-sm font-bold focus-visible:ring-orange-500';
+            }
+            return base + ' bg-gray-50 border-gray-200 text-gray-400 hover:bg-[#fff7ed] hover:border-amber-200 hover:text-amber-700 font-semibold focus-visible:ring-orange-400';
+          }
+        }
+
+        // 5. Status Toggle Action
+        function toggleStatus(id, targetStatus) {
+          if (statuses[id] === targetStatus) {
+            statuses[id] = null;
+          } else {
+            statuses[id] = targetStatus;
+          }
+          saveState();
+          updateRowUI(id);
+          updateProgressUI();
+        }
+
+        function updateRowUI(id) {
+          const currentStatus = statuses[id];
+          const row = document.getElementById('deliverable-row-' + id);
+          if (row) {
+            row.className = 'block md:table-row p-4 mb-4 border border-gray-200 rounded-[10px] md:border-0 md:rounded-none transition-colors duration-300 ease-in-out ' + getRowBgClass(currentStatus);
+          }
+          const badgeContainer = document.getElementById('badge-container-' + id);
+          if (badgeContainer) {
+            badgeContainer.innerHTML = renderStatusBadge(currentStatus);
+          }
+          const btnSolide = document.getElementById('btn-solide-' + id);
+          if (btnSolide) {
+            btnSolide.setAttribute('aria-pressed', currentStatus === 'solide' ? 'true' : 'false');
+            btnSolide.className = getBtnClass(currentStatus, 'solide');
+            btnSolide.innerHTML = `${currentStatus === 'solide' ? ICONS.checkCircle : ''}<span>Solide</span>`;
+          }
+          const btnConsolider = document.getElementById('btn-consolider-' + id);
+          if (btnConsolider) {
+            btnConsolider.setAttribute('aria-pressed', currentStatus === 'consolider' ? 'true' : 'false');
+            btnConsolider.className = getBtnClass(currentStatus, 'consolider');
+            btnConsolider.innerHTML = `${currentStatus === 'consolider' ? ICONS.alertCircle : ''}<span>À consolider</span>`;
+          }
+        }
+
+        // 6. Update Progress Indicators
+        function updateProgressUI() {
+          const vals = Object.values(statuses);
+          const totalEvaluated = vals.filter(s => s !== null).length;
+          const solidCount = vals.filter(s => s === 'solide').length;
+          const consolidateCount = vals.filter(s => s === 'consolider').length;
+          const progressPercent = Math.round((totalEvaluated / 9) * 100);
+
+          document.getElementById('progress-text').textContent = `${totalEvaluated} / 9 livrables évalués`;
+          document.getElementById('badge-solide-count').textContent = `✓ ${solidCount} Solide`;
+          document.getElementById('badge-consolider-count').textContent = `◎ ${consolidateCount} À consolider`;
+
+          const bar = document.getElementById('progress-bar-fill');
+          bar.style.width = `${progressPercent}%`;
+          bar.setAttribute('aria-valuenow', totalEvaluated.toString());
+        }
+
+        // 7. Reset Handler
+        document.getElementById('btn-reset').addEventListener('click', function() {
+          if (window.confirm('Réinitialiser tous les statuts ?')) {
+            for (let i = 1; i <= 9; i++) {
+              statuses[i] = null;
+            }
+            try {
+              localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {
+              console.error(e);
+            }
+            DELIVERABLES.forEach(d => updateRowUI(d.id));
+            updateProgressUI();
+          }
+        });
+
+        // 8. Generate Summary Text for Copy & Download
+        function buildSummaryText() {
+          const now = new Date();
+          const dateStr = now.toLocaleDateString('fr-FR');
+          const timeStr = now.toLocaleTimeString('fr-FR');
+
+          const lines = [
+            "=== PANORAMA DES 9 LIVRABLES NEXIA - ÉTAT DES LIEUX ===",
+            `Apprenant : ${USER_SESSION_EMAIL}`,
+            `Généré le : ${dateStr} à ${timeStr}`,
+            "--------------------------------------------------",
+            ""
+          ];
+
+          DELIVERABLES.forEach(item => {
+            const statusVal = statuses[item.id];
+            const statusText = statusVal === 'solide' ? 'Solide ✓' : statusVal === 'consolider' ? 'À consolider ◎' : 'Non évalué -';
+            lines.push(`Livrable N°${item.id} [${item.competencies.join(', ')}] : ${item.label}`);
+            lines.push(`↳ Statut : ${statusText}`);
+            lines.push("");
+          });
+
+          const vals = Object.values(statuses);
+          const totalVal = vals.filter(s => s !== null).length;
+          const solidsVal = vals.filter(s => s === 'solide').length;
+          const consolidatesVal = vals.filter(s => s === 'consolider').length;
+
+          lines.push("--------------------------------------------------");
+          lines.push(`Bilan final : ${totalVal}/9 livrables évalués`);
+          lines.push(`- ✓ Solide(s) : ${solidsVal}`);
+          lines.push(`- ◎ À consolider : ${consolidatesVal}`);
+          lines.push("--------------------------------------------------");
+
+          return lines.join("\n");
+        }
+
+        // 9. Copy to Clipboard
+        const copyBtn = document.getElementById('btn-copy-summary');
+        const copyBtnText = document.getElementById('copy-btn-text');
+
+        copyBtn.addEventListener('click', async function() {
+          const text = buildSummaryText();
+          let success = false;
+
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            try {
+              await navigator.clipboard.writeText(text);
+              success = true;
+            } catch (err) {
+              console.warn("Clipboard API non disponible, recours au fallback", err);
+            }
+          }
+
+          if (!success) {
+            try {
+              const textArea = document.createElement("textarea");
+              textArea.value = text;
+              textArea.style.position = "fixed";
+              textArea.style.left = "-9999px";
+              textArea.style.top = "0";
+              document.body.appendChild(textArea);
+              textArea.focus();
+              textArea.select();
+              success = document.execCommand('copy');
+              document.body.removeChild(textArea);
+            } catch (e) {
+              console.error("Échec de la copie", e);
+            }
+          }
+
+          if (success) {
+            const oldText = copyBtnText.textContent;
+            copyBtnText.textContent = "✓ Bilan copié !";
+            copyBtn.classList.add('bg-emerald-100', 'text-emerald-800', 'border-emerald-300');
+            setTimeout(function() {
+              copyBtnText.textContent = oldText;
+              copyBtn.classList.remove('bg-emerald-100', 'text-emerald-800', 'border-emerald-300');
+            }, 2000);
+          } else {
+            window.prompt("Copiez manuellement votre bilan ci-dessous :", text);
+          }
+        });
+
+        // 10. File Download Handler (.txt)
+        document.getElementById('btn-download-summary').addEventListener('click', function() {
+          const text = buildSummaryText();
+          const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          const date = new Date().toISOString().slice(0, 10);
+          a.href = url;
+          a.download = `bilan-livrables-nexia-${date}.txt`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        });
+
+        // Initialize App
+        loadState();
+        renderRows();
+        updateProgressUI();
+      })();
+    </script>
   </body>
 </html>
-
