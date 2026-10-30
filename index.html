@@ -74,7 +74,24 @@
       <div class="max-w-5xl mx-auto space-y-6">
         
         <!-- Header Row -->
-        <header class="flex flex-row items-center justify-end">
+        <header class="flex flex-row items-center justify-between gap-4">
+          <button
+            id="btn-fullscreen"
+            type="button"
+            class="inline-flex items-center gap-2 font-bold text-xs text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-md py-2 px-3.5 shadow-2xs transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#d41875] focus-visible:ring-offset-2 cursor-pointer"
+            aria-label="Basculer en mode plein écran"
+          >
+            <!-- Maximize Icon -->
+            <svg id="fullscreen-enter-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+            </svg>
+            <!-- Minimize Icon -->
+            <svg id="fullscreen-exit-icon" class="hidden" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+            </svg>
+            <span id="fullscreen-btn-text">Plein écran</span>
+          </button>
+
           <div class="text-right">
             <h1 class="text-[#d41875] text-lg sm:text-l font-bold uppercase tracking-tight">Panorama des 9 livrables</h1>
             <p class="text-slate-500 text-[10px] sm:text-xs font-semibold">Auto-évaluation NEXIA</p>
@@ -102,14 +119,6 @@
               <p class="text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
                 Utilisez ce tableau interactif pour cartographier l'avancement des livrables de votre dossier NEXIA. Suivez vos forces collectives et ciblez les axes à consolider.
               </p>
-            </div>
-            
-            <!-- Session Badge & Quick Actions -->
-            <div class="flex flex-col sm:flex-row items-end sm:items-center gap-3 shrink-0 md:pt-4">
-              <div class="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 py-1.5 px-3 rounded-md text-xs font-medium text-slate-500 shadow-2xs">
-                <span class="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse"></span>
-                <span>Session : <strong class="font-semibold text-slate-700">lucille@1001parcours.fr</strong></span>
-              </div>
             </div>
           </div>
 
@@ -296,7 +305,6 @@
         ];
 
         const STORAGE_KEY = 'checklist_livrables_nexia_v1';
-        const USER_SESSION_EMAIL = 'lucille@1001parcours.fr';
 
         // In-memory state: maps deliverable ID to status ('solide' | 'consolider' | null)
         const statuses = {};
@@ -561,7 +569,6 @@
 
           const lines = [
             "=== PANORAMA DES 9 LIVRABLES NEXIA - ÉTAT DES LIEUX ===",
-            `Apprenant : ${USER_SESSION_EMAIL}`,
             `Généré le : ${dateStr} à ${timeStr}`,
             "--------------------------------------------------",
             ""
@@ -650,6 +657,79 @@
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
         });
+
+        // 11. Fullscreen Toggle Handler
+        const fullscreenBtn = document.getElementById('btn-fullscreen');
+        const fullscreenEnterIcon = document.getElementById('fullscreen-enter-icon');
+        const fullscreenExitIcon = document.getElementById('fullscreen-exit-icon');
+        const fullscreenBtnText = document.getElementById('fullscreen-btn-text');
+
+        function isFullscreenActive() {
+          return !!(
+            document.fullscreenElement ||
+            document.webkitFullscreenElement ||
+            document.mozFullScreenElement ||
+            document.msFullscreenElement
+          );
+        }
+
+        function updateFullscreenUI() {
+          const active = isFullscreenActive();
+          if (active) {
+            if (fullscreenEnterIcon) fullscreenEnterIcon.classList.add('hidden');
+            if (fullscreenExitIcon) fullscreenExitIcon.classList.remove('hidden');
+            if (fullscreenBtnText) fullscreenBtnText.textContent = "Quitter plein écran";
+            if (fullscreenBtn) {
+              fullscreenBtn.setAttribute('aria-label', "Quitter le mode plein écran");
+              fullscreenBtn.classList.add('bg-[#d41875]/10', 'text-[#d41875]', 'border-[#d41875]/30');
+              fullscreenBtn.classList.remove('bg-white', 'text-slate-700', 'border-slate-200');
+            }
+          } else {
+            if (fullscreenEnterIcon) fullscreenEnterIcon.classList.remove('hidden');
+            if (fullscreenExitIcon) fullscreenExitIcon.classList.add('hidden');
+            if (fullscreenBtnText) fullscreenBtnText.textContent = "Plein écran";
+            if (fullscreenBtn) {
+              fullscreenBtn.setAttribute('aria-label', "Basculer en mode plein écran");
+              fullscreenBtn.classList.remove('bg-[#d41875]/10', 'text-[#d41875]', 'border-[#d41875]/30');
+              fullscreenBtn.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
+            }
+          }
+        }
+
+        async function toggleFullscreen() {
+          try {
+            if (!isFullscreenActive()) {
+              const docEl = document.documentElement;
+              if (docEl.requestFullscreen) {
+                await docEl.requestFullscreen();
+              } else if (docEl.webkitRequestFullscreen) {
+                await docEl.webkitRequestFullscreen();
+              } else if (docEl.msRequestFullscreen) {
+                await docEl.msRequestFullscreen();
+              }
+            } else {
+              if (document.exitFullscreen) {
+                await document.exitFullscreen();
+              } else if (document.webkitExitFullscreen) {
+                await document.webkitExitFullscreen();
+              } else if (document.msExitFullscreen) {
+                await document.msExitFullscreen();
+              }
+            }
+          } catch (err) {
+            console.warn("Mode plein écran restreint ou non supporté :", err);
+          }
+          updateFullscreenUI();
+        }
+
+        if (fullscreenBtn) {
+          fullscreenBtn.addEventListener('click', toggleFullscreen);
+        }
+
+        document.addEventListener('fullscreenchange', updateFullscreenUI);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenUI);
+        document.addEventListener('mozfullscreenchange', updateFullscreenUI);
+        document.addEventListener('MSFullscreenChange', updateFullscreenUI);
 
         // Initialize App
         loadState();

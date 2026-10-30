@@ -141,7 +141,6 @@ export default function App() {
   const handleCopyText = async () => {
     const lines = [
       "=== PANORAMA DES 9 LIVRABLES NEXIA - ÉTAT DES LIEUX ===",
-      `Apprenant : lucille@1001parcours.fr`,
       `Généré le : ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}`,
       "--------------------------------------------------",
       ""
@@ -222,14 +221,6 @@ export default function App() {
               <p className="text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
                 Utilisez ce tableau interactif pour cartographier l&apos;avancement des livrables de votre dossier NEXIA. Suivez vos forces collectives et ciblez les axes à consolider.
               </p>
-            </div>
-            
-            {/* Action buttons list */}
-            <div className="flex items-center gap-2 shrink-0 md:pt-4 self-stretch sm:self-auto justify-end">
-              <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 py-1.5 px-3 rounded-md text-xs font-medium text-slate-500 shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse"></span>
-                <span>Session : <span className="font-semibold text-slate-700">lucille@1001parcours.fr</span></span>
-              </div>
             </div>
           </div>
 
